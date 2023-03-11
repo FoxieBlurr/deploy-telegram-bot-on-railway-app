@@ -1,30 +1,12 @@
 
-import psycopg2
-
-import asyncio
-from datetime import datetime
-from typing import Optional
-
-import aiogram.utils.markdown as md
-from aiogram import Bot, Dispatcher, types
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters.state import State, StatesGroup
-from aiogram.types import ParseMode
-from aiogram.utils import executor
-from aiogram.types import InlineKeyboardMarkup,InlineKeyboardButton,KeyboardButton
-from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove, ReplyKeyboardMarkup    
-from aiogram.dispatcher.filters import Text
-import logging
-from aiogram.types import ReplyKeyboardRemove
-from aiogram.contrib.middlewares.logging import LoggingMiddleware
-
-
 
 
 import logging
 import telegram
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, MessageHandler
+from telegram.ext.filters import Filters
+
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
