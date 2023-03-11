@@ -21,7 +21,10 @@ from aiogram.contrib.middlewares.logging import LoggingMiddleware
 
 
 
-API_TOKEN = '6073371023:AAG1YMot-OVMTSLqALmMNjZMVhb5m73psbA'
+
+import logging
+import telegram
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -40,7 +43,7 @@ def dad_joke_handler(update, context):
 # Define the main function to run the bot
 def main():
     # Set up the bot and the dispatcher
-    updater = Updater(API_TOKEN, use_context=True)
+    updater = Updater("6073371023:AAG1YMot-OVMTSLqALmMNjZMVhb5m73psbA", use_context=True)
     dp = updater.dispatcher
 
     # Add the message handler to the dispatcher
@@ -53,7 +56,6 @@ def main():
 
 if __name__ == '__main__':
     main()
-  
 
     
      
