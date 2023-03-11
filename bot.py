@@ -1,93 +1,42 @@
-
-import psycopg2
-
-import asyncio
-from datetime import datetime
-from typing import Optional
-
-import aiogram.utils.markdown as md
-from aiogram import Bot, Dispatcher, types
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters.state import State, StatesGroup
-from aiogram.types import ParseMode
-from aiogram.utils import executor
-from aiogram.types import InlineKeyboardMarkup,InlineKeyboardButton,KeyboardButton
-from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove, ReplyKeyboardMarkup    
-from aiogram.dispatcher.filters import Text
+import os
 import logging
-from aiogram.types import ReplyKeyboardRemove
-from aiogram.contrib.middlewares.logging import LoggingMiddleware
+import telegram
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
+# Enable logging
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
 
+# Define the dad joke function
+def dad_joke(update, context):
+    text = update.message.text.lower()
+    if text.startswith(("i'm", "im")):
+        name = text[3:].strip()
+        joke = f"Hi {name}, I'm Dad!"
+        context.bot.send_message(chat_id=update.effective_chat.id, text=joke)
 
-API_TOKEN = '5730303832:AAGE3lbjVqNaqJ0bUww-eRUzW_dNTkrJXrg'
-DB_URI ="postgresql://postgres:SEvju9ySxpC7lfoeXwwU@containers-us-west-79.railway.app:7370/railway"
+# Define the start command function
+def start(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Hi! I am a dad joke bot. Send me a message starting with 'im' or 'I'm' and I'll tell you a dad joke!")
 
-bot = Bot(token=API_TOKEN)
-dp = Dispatcher(bot)
-storage = MemoryStorage()
-dp = Dispatcher(bot, storage=storage)
-dp.middleware.setup(LoggingMiddleware())
+def main():
+    # Get the Telegram bot token from the environment variable
+    token = os.getenv('TELEGRAM_TOKEN')
 
+    # Create the Updater and pass in the token
+    updater = Updater(token, use_context=True)
 
-db_connection = psycopg2.connect(DB_URI, sslmode="require")
-db_object = db_connection.cursor()
+    # Get the dispatcher to register handlers
+    dispatcher = updater.dispatcher
 
-async def gen_main_markup():
-    markup = InlineKeyboardMarkup(resize_keyboard=True)
-    #arkup = ReplyKeyboardMarkup(resize_keyboard=False,one_time_keyboard=False)
-    
-    markup.row_width = 1
-    markup.add(InlineKeyboardButton("📖BUTTON1📖", callback_data="inst"),
-               InlineKeyboardButton("💰BUTTON2💰", callback_data="bal"),
-               InlineKeyboardButton("✍NOTE✍️", callback_data="add_comment"),
-			   
-               
-               )
-                                    
-              
-    return markup
+    # Add the handlers
+    dispatcher.add_handler(CommandHandler('start', start))
+    dispatcher.add_handler(MessageHandler(Filters.text, dad_joke))
 
-    
-@dp.message_handler(commands=['start'])
-async def command_start(message: types.Message):
-	user_id = message.from_user.id
-	username = message.from_user.username
-	if message.chat.type== "private":
-
-
-
-
-				
-
-		db_object.execute(f"SELECT id FROM users WHERE id = {user_id}")
-	    
-		result = db_object.fetchone()
-
-	    
-
-		if not result:
-			db_object.execute("INSERT INTO users(id, username) VALUES (%s, %s)", (user_id, username))
-			db_connection.commit()
-			await bot.send_message(message.chat.id, f"السلام عليكم 🖐\n Welcome {username}\nYou have got 2 points for free",reply_markup=await gen_main_markup())
-	  		
-	  		
-		else:
-			await bot.send_message(message.chat.id, f"السلام عليكم 🖐\n Welcome {username}",reply_markup=await gen_main_markup())
-
-  	
-
-		   
-		    
-
-print("working..............")
+    # Start the bot
+    updater.start_polling()
+    logger.info('Dad joke bot started.')
+    updater.idle()
 
 if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=False)
-
-  
-
-    
-     
-	     		
+    main()
