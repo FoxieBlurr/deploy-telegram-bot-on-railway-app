@@ -5,7 +5,8 @@ import logging
 import telegram
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler
-from telegram.ext.filters import Filters
+import telegram.ext.filters as filters
+
 
 
 # Enable logging
